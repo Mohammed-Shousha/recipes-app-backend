@@ -8,10 +8,12 @@ const handleChangingData = async (args, client) => {
    const values = [name, email]
    const res = await client.query(query, values)
    const user = res.rows[0]
-   return {
-      data: user,
-      result: res.rowCount
+   if(res.rowCount === 1){ //updated rows
+      return user
+   }else {
+      return {message: "Couldn't Update Data"}
    }
+      
 }
 
 const handleChangingPassword = async (args, client) => {

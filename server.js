@@ -83,7 +83,7 @@ const cloudinary = require('cloudinary').v2
          LikeRecipe(email: String!, id: ID!, title: String!, image: String!): UpdatingResult
          UnlikeRecipe(email: String!, id: ID!): DeletingResult
          UploadImage(email: String!, image: String!): User
-         ChangeData(email: String!, name: String!): UpdatingResult
+         ChangeData(email: String!, name: String!): Result
          ChangePassword(email: String!, password: String!, newPassword: String!): Result
       } 
 
@@ -136,15 +136,15 @@ const cloudinary = require('cloudinary').v2
       Data: {
          __resolveType(obj) {
             if (obj.name) {
-               return 'User'
+               return "User"
             }
 
             if (obj.id) {
-               return 'FavRecipe'
+               return "FavRecipe"
             }
 
             if (obj.type) {
-               return 'Recipe'
+               return "Recipe"
             }
 
             return null
