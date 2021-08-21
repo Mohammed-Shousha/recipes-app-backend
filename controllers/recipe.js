@@ -1,13 +1,5 @@
-const handleAddingRecipe = async (args, client, cloudinary) => {
+const handleAddingRecipe = async (args, client) => {
    const { email, title, time, type, ingredients, directions, image } = args
-   let result = ''
-   if(image){
-      result = await cloudinary.uploader.upload(image)
-   }else{
-      result = {
-         secure_url: ''
-      }
-   }
    const res = await client.query(`UPDATE users SET recipes=COALESCE(recipes, '[]'::jsonb) ||
       '{
          "title": "${title}",
@@ -15,9 +7,8 @@ const handleAddingRecipe = async (args, client, cloudinary) => {
          "type": "${type}",
          "ingredients": "${ingredients}",
          "directions": "${directions}",
-         "image": "${result.secure_url}"
-      }'
-      ::jsonb
+         "image": "${image}"
+      }'::TEXT ::jsonb
       WHERE email='${email}' RETURNING *`)
 
    return {

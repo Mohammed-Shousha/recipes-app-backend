@@ -8,8 +8,6 @@ const handleSignIn = require('./controllers/signin');
 const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe } = require('./controllers/recipe')
 const handleUploadingImage = require('./controllers/uploadImage')
 const { handleChangingData, handleChangingPassword } = require('./controllers/editProfile')
-const cloudinary = require('cloudinary').v2
-
 
 ;
 (async () => {
@@ -23,17 +21,6 @@ const cloudinary = require('cloudinary').v2
    })
    await client.connect()
 
-   cloudinary.config({
-      cloud_name: process.env.CLOUD_NAME,
-      api_key: process.env.CLOUD_API_KEY,
-      api_secret: process.env.CLOUD_API_SECRET,
-      // shorten: true,
-      // secure: true,
-      // ssl_detected: true
-   })
-
-   // const res = await client.query("SELECT fav_recipes FROM users WHERE email='mo@f.co'")
-   // console.log(res.rows[0].fav_recipes[0].id)
 
    const typeDefs = gql`
       type Query {
@@ -111,10 +98,10 @@ const cloudinary = require('cloudinary').v2
       Mutation: {
          SignUp: (_, args) => handleSignUp(args, client),
          SignIn: (_, args) => handleSignIn(args, client),
-         AddRecipe: (_, args) => handleAddingRecipe(args, client, cloudinary),
+         AddRecipe: (_, args) => handleAddingRecipe(args, client),
          LikeRecipe: (_, args) => handleLikingRecipe(args, client),
          UnlikeRecipe: (_, args) => handleUnlikingRecipe(args, client),
-         UploadImage: (_, args) => handleUploadingImage(args, client, cloudinary),
+         UploadImage: (_, args) => handleUploadingImage(args, client),
          ChangeData: (_, args) => handleChangingData(args, client),
          ChangePassword: (_, args) => handleChangingPassword(args, client),
       },
