@@ -3,21 +3,21 @@ const saltRounds = 10
 
 
 const handleChangingData = async (args, client) => {
-   const { email, name } = args
-   const query = `UPDATE users SET name=$1 WHERE email=$2 RETURNING *`
-   const values = [name, email]
+   const { email, name, image } = args
+   const query = `UPDATE users SET name=$1, image=$3 WHERE email=$2 RETURNING *`
+   const values = [name, email, image]
    const res = await client.query(query, values)
    const user = res.rows[0]
-   if(res.rowCount === 1){ //updated rows
+   if (res.rowCount === 1) { //updated rows
       return user
-   }else {
-      return {message: "Couldn't Update Data"}
+   } else {
+      return { message: "Couldn't Update Data" }
    }
-      
+
 }
 
 const handleChangingPassword = async (args, client) => {
-   const { email, password, newPassword} = args
+   const { email, password, newPassword } = args
    const res = await client.query(`SELECT * FROM users WHERE email='${email}'`)
    const user = res.rows[0]
    const isValid = await bcrypt.compare(password, user.password)
@@ -35,7 +35,7 @@ const handleChangingPassword = async (args, client) => {
 
 }
 
-module.exports ={ 
-   handleChangingData ,
+module.exports = {
+   handleChangingData,
    handleChangingPassword
 }

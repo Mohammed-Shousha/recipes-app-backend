@@ -1,7 +1,11 @@
+const { nanoid } = require('nanoid')
+
 const handleAddingRecipe = async (args, client) => {
    const { email, title, time, type, ingredients, directions, image } = args
+   const id = nanoid()
    const res = await client.query(`UPDATE users SET recipes=COALESCE(recipes, '[]'::jsonb) ||
       '{
+         "id": "${id}",
          "title": "${title}",
          "time": "${time}",
          "type": "${type}",
@@ -16,6 +20,19 @@ const handleAddingRecipe = async (args, client) => {
       result: res.rowCount
    }
 
+}
+
+const handleDeletingRecipe = async (args, client) => {
+   const { email, id } = args
+   const res = await client.query(`UPDATE users SET recipes = recipes -
+   Cast((SELECT position - 1 FROM users, jsonb_array_elements(recipes) with ordinality arr(item_object, position)
+   WHERE email='${email}' and item_object->>'id' = '${id}') as int)
+   WHERE email='${email}' RETURNING *`)
+
+   return {
+      data: res.rows[0].recipes,
+      result: res.rowCount
+   }
 }
 
 const handleLikingRecipe = async (args, client) => {
@@ -53,5 +70,6 @@ const handleUnlikingRecipe = async (args, client) => {
 module.exports = {
    handleAddingRecipe,
    handleLikingRecipe,
-   handleUnlikingRecipe
-} 
+   handleUnlikingRecipe,
+   handleDeletingRecipe
+}

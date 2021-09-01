@@ -5,8 +5,7 @@ const { ApolloServer, gql } = require('apollo-server-express')
 const { Pool } = require('pg')
 const handleSignUp = require('./controllers/signup')
 const handleSignIn = require('./controllers/signin');
-const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe } = require('./controllers/recipe')
-const handleUploadingImage = require('./controllers/uploadImage')
+const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe, handleDeletingRecipe } = require('./controllers/recipe')
 const { handleChangingData, handleChangingPassword } = require('./controllers/editProfile')
 
 ;
@@ -39,6 +38,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/ed
       }
 
       type Recipe {
+         id: ID!
          title: String!
          time: Int!
          type: String!
@@ -58,19 +58,15 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/ed
          result: Int! # 1 "Success"
       }
 
-      type DeletingResult {
-         data: [Data!]
-         result: Int!
-      }
 
       type Mutation{
          SignUp(name: String!, email: String!, password: String!): Result
          SignIn(email: String!, password: String!): Result
          AddRecipe(email: String!, title: String!, time: String!, type: String!, ingredients: String!, directions: String!, image: String): UpdatingResult
+         DeleteRecipe(email: String!, id: ID!): UpdatingResult
          LikeRecipe(email: String!, id: ID!, title: String!, image: String!): UpdatingResult
-         UnlikeRecipe(email: String!, id: ID!): DeletingResult
-         UploadImage(email: String!, image: String!): User
-         ChangeData(email: String!, name: String!): Result
+         UnlikeRecipe(email: String!, id: ID!): UpdatingResult
+         ChangeData(email: String!, name: String!, image: String!): Result
          ChangePassword(email: String!, password: String!, newPassword: String!): Result
       } 
 
@@ -99,9 +95,9 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/ed
          SignUp: (_, args) => handleSignUp(args, client),
          SignIn: (_, args) => handleSignIn(args, client),
          AddRecipe: (_, args) => handleAddingRecipe(args, client),
+         DeleteRecipe: (_, args) => handleDeletingRecipe(args, client),
          LikeRecipe: (_, args) => handleLikingRecipe(args, client),
          UnlikeRecipe: (_, args) => handleUnlikingRecipe(args, client),
-         UploadImage: (_, args) => handleUploadingImage(args, client),
          ChangeData: (_, args) => handleChangingData(args, client),
          ChangePassword: (_, args) => handleChangingPassword(args, client),
       },
@@ -126,12 +122,12 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/ed
                return "User"
             }
 
-            if (obj.id) {
-               return "FavRecipe"
-            }
-
             if (obj.type) {
                return "Recipe"
+            }
+
+            if (obj.id) {
+               return "FavRecipe"
             }
 
             return null
