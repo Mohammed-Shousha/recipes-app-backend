@@ -3,10 +3,10 @@ require('dotenv').config()
 const cors = require('cors')
 const { ApolloServer, gql } = require('apollo-server-express')
 const { Pool } = require('pg')
-const handleSignUp = require('./controllers/signup')
-const handleSignIn = require('./controllers/signin');
-const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe, handleDeletingRecipe } = require('./controllers/recipe')
-const { handleChangingData, handleChangingPassword } = require('./controllers/editProfile')
+const handleRegister = require('./controllers/register')
+const { handleSignIn, handleGoogleSignIn } = require('./controllers/signin')
+const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe, handleDeletingRecipe, handleEditingRecipe } = require('./controllers/recipe')
+const { handleChangingData, handleChangingPassword } = require('./controllers/profile')
 
 ;
 (async () => {
@@ -31,7 +31,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/ed
          id: ID!
          name: String!
          email: String!
-         password: String!
+         password: String
          recipes: [Recipe!]
          fav_recipes: [FavRecipe!]
          image: String
@@ -60,10 +60,12 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/ed
 
 
       type Mutation{
-         SignUp(name: String!, email: String!, password: String!): Result
+         Register(name: String!, email: String!, password: String!): Result
          SignIn(email: String!, password: String!): Result
+         GoogleSignIn(email: String!, name: String!, image: String): User
          AddRecipe(email: String!, title: String!, time: String!, type: String!, ingredients: String!, directions: String!, image: String): UpdatingResult
          DeleteRecipe(email: String!, id: ID!): UpdatingResult
+         EditRecipe(email: String!, id: ID!, title: String!, time: String!, type: String!, ingredients: String!, directions: String!, image: String): UpdatingResult
          LikeRecipe(email: String!, id: ID!, title: String!, image: String!): UpdatingResult
          UnlikeRecipe(email: String!, id: ID!): UpdatingResult
          ChangeData(email: String!, name: String!, image: String!): Result
@@ -92,10 +94,12 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/ed
       },
 
       Mutation: {
-         SignUp: (_, args) => handleSignUp(args, client),
+         Register: (_, args) => handleRegister(args, client),
          SignIn: (_, args) => handleSignIn(args, client),
+         GoogleSignIn: (_, args) => handleGoogleSignIn(args, client),
          AddRecipe: (_, args) => handleAddingRecipe(args, client),
          DeleteRecipe: (_, args) => handleDeletingRecipe(args, client),
+         EditRecipe: (_, args) => handleEditingRecipe(args, client),
          LikeRecipe: (_, args) => handleLikingRecipe(args, client),
          UnlikeRecipe: (_, args) => handleUnlikingRecipe(args, client),
          ChangeData: (_, args) => handleChangingData(args, client),

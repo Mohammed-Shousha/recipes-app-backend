@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
-const handleSignUp = async (args, client) =>{
+const handleRegister = async (args, client) =>{
    const { name, email, password } = args
 
    const { rows } = await client.query(`SELECT * FROM users WHERE email='${email}'`)
@@ -15,4 +15,4 @@ const handleSignUp = async (args, client) =>{
    return res.rows[0]
 }
 
-module.exports = handleSignUp
+module.exports = handleRegister
