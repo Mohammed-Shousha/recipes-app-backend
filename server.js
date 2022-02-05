@@ -17,6 +17,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
       database: process.env.DBNAME,
       password: process.env.DBPASSWORD,
       port: process.env.DBPORT,
+      ssl: { rejectUnauthorized: false }
    })
    await client.connect()
 
