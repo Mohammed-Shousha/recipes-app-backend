@@ -156,9 +156,12 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
    app.use(express.json())
    server.applyMiddleware({ app })
 
+   let port = process.env.PORT || 8000
+   let host = '0.0.0.0'
 
-   await new Promise(resolve => app.listen({ port: process.env.PORT || 5000 }, resolve))
-   console.log(`Server ready at http://localhost:5000${server.graphqlPath}`)
+
+   await new Promise(resolve => app.listen({ port, host }, resolve))
+   console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
    return { server, app }
 
 })().catch(err => console.log(err.stack))
