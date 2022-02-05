@@ -156,7 +156,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
    app.use(express.json())
    server.applyMiddleware({ app })
 
-   let port = process.env.PORT || 8000
+   let port = process.env.PORT || 5000
    let host = '0.0.0.0'
 
 
