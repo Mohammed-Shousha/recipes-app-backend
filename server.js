@@ -157,7 +157,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
    server.applyMiddleware({ app })
 
 
-   await new Promise(resolve => app.listen({ port: 5000 }, resolve))
+   await new Promise(resolve => app.listen({ port: process.env.PORT || 5000 }, resolve))
    console.log(`Server ready at http://localhost:5000${server.graphqlPath}`)
    return { server, app }
 
