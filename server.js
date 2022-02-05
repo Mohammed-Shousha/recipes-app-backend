@@ -160,7 +160,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
    let host = '0.0.0.0'
 
 
-   await new Promise(resolve => app.listen({ port, host }, resolve))
+   await new Promise(resolve => app.listen(port, host , resolve))
    console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
    return { server, app }
 
