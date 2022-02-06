@@ -2,7 +2,7 @@ const express = require('express')
 require('dotenv').config()
 const cors = require('cors')
 const { ApolloServer, gql } = require('apollo-server-express')
-const { Pool } = require('pg')
+const { Pool, Client } = require('pg')
 const handleRegister = require('./controllers/register')
 const { handleSignIn, handleGoogleSignIn } = require('./controllers/signin')
 const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe, handleDeletingRecipe, handleEditingRecipe } = require('./controllers/recipe')
@@ -10,8 +10,14 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
 
 ;
 (async () => {
+
+   // const connectionString = 'postgres://hvqyhgtaclxebm:9ccc0ea9db3ad298156946244325152ae400f6f3daf15eeaa139af08ca780cc5@ec2-54-157-160-218.compute-1.amazonaws.com:5432/de75vu6dup88av'
    
-   const client = new Pool({
+   // const pool = new Pool({
+   //    connectionString
+   // })
+   
+   const client = new Client({
       user: process.env.DBUSER1,
       host: process.env.DBHOST1,
       database: process.env.DBNAME1,
