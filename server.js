@@ -17,14 +17,22 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
    //    connectionString
    // })
    
+   // const client = new Client({
+   //    user: process.env.DBUSER1,
+   //    host: process.env.DBHOST1,
+   //    database: process.env.DBNAME1,
+   //    password: process.env.DBPASSWORD1,
+   //    port: process.env.DBPORT,
+   //    ssl: { rejectUnauthorized: false }
+   // })
+
    const client = new Client({
-      user: process.env.DBUSER1,
-      host: process.env.DBHOST1,
-      database: process.env.DBNAME1,
-      password: process.env.DBPASSWORD1,
-      port: process.env.DBPORT,
-      ssl: { rejectUnauthorized: false }
-   })
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+         rejectUnauthorized: false
+      }
+   });
+
    await client.connect()
 
 
