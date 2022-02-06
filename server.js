@@ -12,10 +12,10 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
 (async () => {
    
    const client = new Pool({
-      user: process.env.DBUSER,
-      host: process.env.DBHOST,
-      database: process.env.DBNAME,
-      password: process.env.DBPASSWORD,
+      user: process.env.DBUSER1,
+      host: process.env.DBHOST1,
+      database: process.env.DBNAME1,
+      password: process.env.DBPASSWORD1,
       port: process.env.DBPORT,
       ssl: { rejectUnauthorized: false }
    })
