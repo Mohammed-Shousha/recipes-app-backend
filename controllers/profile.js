@@ -13,7 +13,6 @@ const handleChangingData = async (args, client) => {
    } else {
       return { message: "Couldn't Update Data" }
    }
-
 }
 
 const handleChangingPassword = async (args, client) => {
@@ -32,7 +31,6 @@ const handleChangingPassword = async (args, client) => {
       const result = await client.query(query, values)
       return result.rows[0]
    }
-
 }
 
 module.exports = {

@@ -3,11 +3,11 @@ require('dotenv').config()
 const { ApolloServer, gql } = require('apollo-server-express')
 const { Client } = require('pg')
 const handleRegister = require('./controllers/register')
-const { handleSignIn, handleGoogleSignIn } = require('./controllers/signin')
+const handleSignIn = require('./controllers/signin')
+const handleGoogleAuth = require('./controllers/google')
 const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe, handleDeletingRecipe, handleEditingRecipe } = require('./controllers/recipe')
-const { handleChangingData, handleChangingPassword } = require('./controllers/profile')
+const { handleChangingData, handleChangingPassword } = require('./controllers/profile');
 
-;
 (async () => {
 
    // const client = new Client({
@@ -70,13 +70,13 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
       type Mutation{
          Register(name: String!, email: String!, password: String!): Result
          SignIn(email: String!, password: String!): Result
-         GoogleSignIn(email: String!, name: String!, image: String): User
+         GoogleAuth(email: String!, name: String!, image: String): User
          AddRecipe(email: String!, title: String!, time: String!, type: String!, ingredients: String!, directions: String!, image: String): UpdatingResult
          DeleteRecipe(email: String!, id: ID!): UpdatingResult
          EditRecipe(email: String!, id: ID!, title: String!, time: String!, type: String!, ingredients: String!, directions: String!, image: String): UpdatingResult
          LikeRecipe(email: String!, id: ID!, title: String!, image: String!): UpdatingResult
          UnlikeRecipe(email: String!, id: ID!): UpdatingResult
-         ChangeData(email: String!, name: String!, image: String!): Result
+         ChangeData(email: String!, name: String!, image: String): Result
          ChangePassword(email: String!, password: String!, newPassword: String!): Result
       } 
 
@@ -88,14 +88,14 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
         message: String!
       }
    `
-      
+
    const resolvers = {
       Query: {
-         users: async() =>{
+         users: async () => {
             const { rows } = await client.query("SELECT * FROM users")
             return rows
          },
-         user: async(_, args) => {
+         user: async (_, args) => {
             const { rows } = await client.query(`SELECT * FROM users WHERE email='${args.email}'`)
             return rows[0]
          }
@@ -104,7 +104,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
       Mutation: {
          Register: (_, args) => handleRegister(args, client),
          SignIn: (_, args) => handleSignIn(args, client),
-         GoogleSignIn: (_, args) => handleGoogleSignIn(args, client),
+         GoogleAuth: (_, args) => handleGoogleAuth(args, client),
          AddRecipe: (_, args) => handleAddingRecipe(args, client),
          DeleteRecipe: (_, args) => handleDeletingRecipe(args, client),
          EditRecipe: (_, args) => handleEditingRecipe(args, client),
@@ -147,14 +147,14 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
       }
 
    }
-   
+
    const app = express()
    const server = new ApolloServer({
       typeDefs,
       resolvers,
    })
    await server.start()
-   
+
    app.use(express.json())
    server.applyMiddleware({ app })
 
@@ -162,7 +162,7 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
    let host = '0.0.0.0'
 
 
-   await new Promise(resolve => app.listen(port, host , resolve))
+   await new Promise(resolve => app.listen(port, host, resolve))
    console.log(`Server ready at http://localhost:${port}${server.graphqlPath}`)
    return { server, app }
 

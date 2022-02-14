@@ -47,7 +47,7 @@ const handleEditingRecipe = async (args, client) => {
    recipe_id.image_path, '"${image}"', ${false})
    FROM recipe_id
    WHERE email = '${email}' RETURNING *`
-   ) 
+   )
    return {
       data: res.rows[0].recipes,
       result: res.rowCount
@@ -81,7 +81,6 @@ const handleLikingRecipe = async (args, client) => {
    return {
       data: res.rows[0].fav_recipes,
       result: res.rowCount
-
    }
 
 }
