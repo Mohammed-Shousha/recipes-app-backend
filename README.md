@@ -1,2 +1,3 @@
 # recipes-app-backend
-apollo-graphql server for recipes app.
+apollo-graphql-postgresql server for recipes app.
+deloyed using heroku.
