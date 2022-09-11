@@ -1,3 +1,5 @@
+const { getUserData } = require('./functions')
+
 const handleGoogleAuth = async (args, client) => {
    const { name, email, image } = args
    const { rows } = await client.query(`SELECT * FROM users WHERE email='${email}'`)
