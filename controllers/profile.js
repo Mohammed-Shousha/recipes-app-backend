@@ -1,18 +1,15 @@
 const bcrypt = require('bcrypt')
+const { getUserData } = require('./functions')
 const saltRounds = 10
 
 const handleChangingData = async (args, client) => {
    const { email, name, image } = args
-   const query = `UPDATE users SET name=$1, image=$3 WHERE email=$2 RETURNING *`
+   const query = `UPDATE users SET name=$1, image=$3 WHERE email=$2`
    const values = [name, email, image]
    const res = await client.query(query, values)
-   const user = res.rows[0]
-   const recipes_result = await client.query(`SELECT * FROM recipes WHERE user_email='${email}'`)
-   const recipes = recipes_result.rows
-   const fav_recipes_result = await client.query(`SELECT * FROM fav_recipes WHERE user_email='${email}'`)
-   const fav_recipes = fav_recipes_result.rows
+   const result = getUserData(client, email)
    if (res.rowCount === 1) { //updated rows
-      return {...user, recipes, fav_recipes}
+      return result
    } else {
       return { message: "Couldn't Update Data" }
    }
@@ -29,15 +26,11 @@ const handleChangingPassword = async (args, client) => {
       return { message: 'You Need to Write a New Password' }
    } else {
       const hash = await bcrypt.hash(newPassword, saltRounds)
-      const query = `UPDATE users SET password=$1 WHERE email=$2 RETURNING *`
+      const query = `UPDATE users SET password=$1 WHERE email=$2`
       const values = [hash, email]
-      const res = await client.query(query, values)
-      const user = res.rows[0]
-      const recipes_result = await client.query(`SELECT * FROM recipes WHERE user_email='${email}'`)
-      const recipes = recipes_result.rows
-      const fav_recipes_result = await client.query(`SELECT * FROM fav_recipes WHERE user_email='${email}'`)
-      const fav_recipes = fav_recipes_result.rows
-      return {...user, recipes, fav_recipes}
+      await client.query(query, values)
+      const result = getUserData(client, email)
+      return result
    }
 }
 
