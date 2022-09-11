@@ -6,25 +6,26 @@ const handleRegister = require('./controllers/register')
 const handleSignIn = require('./controllers/signin')
 const handleGoogleAuth = require('./controllers/google')
 const { handleAddingRecipe, handleLikingRecipe, handleUnlikingRecipe, handleDeletingRecipe, handleEditingRecipe } = require('./controllers/recipe')
-const { handleChangingData, handleChangingPassword } = require('./controllers/profile');
+const { handleChangingData, handleChangingPassword } = require('./controllers/profile')
+const { getUserData } = require('./controllers/functions')
 
-(async () => {
-
-   const client = new Client({
-      user: process.env.DBUSER,
-      host: process.env.DBHOST,
-      database: process.env.DBNAME,
-      password: process.env.DBPASSWORD,
-      port: process.env.DBPORT,
-      // ssl: { rejectUnauthorized: false }
-   })
+;(async () => {
 
    // const client = new Client({
-   //    connectionString: process.env.DATABASE_URL,
-   //    ssl: {
-   //       rejectUnauthorized: false
-   //    }
+   //    user: process.env.DBUSER2,
+   //    host: process.env.DBHOST2,
+   //    database: process.env.DBNAME2,
+   //    password: process.env.DBPASSWORD2,
+   //    port: process.env.DBPORT,
+   //    ssl: { rejectUnauthorized: false }
    // })
+
+   const client = new Client({
+      connectionString: process.env.HEROKU_POSTGRESQL_BRONZE_URL,
+      ssl: {
+         rejectUnauthorized: false
+      }
+   })
 
    await client.connect()
 
@@ -96,16 +97,8 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
             return rows
          },
          user: async (_, args) => {
-            const { rows } = await client.query(`SELECT * FROM users WHERE email='${args.email}'`)
-            const user = rows[0]
-
-            const recipes_result = await client.query(`SELECT * FROM recipes WHERE user_email='${args.email}'`)
-            const recipes = recipes_result.rows
-
-            const fav_recipes_result = await client.query(`SELECT * FROM fav_recipes WHERE user_email='${args.email}'`)
-            const fav_recipes = fav_recipes_result.rows
-            
-            return { ...user, recipes, fav_recipes }
+            const result = getUserData(client, args.email)
+            return result
          }
       },
 
