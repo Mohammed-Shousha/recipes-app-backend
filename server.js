@@ -10,21 +10,21 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
 
 (async () => {
 
-   // const client = new Client({
-   //    user: process.env.DBUSER1,
-   //    host: process.env.DBHOST1,
-   //    database: process.env.DBNAME1,
-   //    password: process.env.DBPASSWORD1,
-   //    port: process.env.DBPORT,
-   //    ssl: { rejectUnauthorized: false }
-   // })
-
    const client = new Client({
-      connectionString: process.env.DATABASE_URL,
-      ssl: {
-         rejectUnauthorized: false
-      }
+      user: process.env.DBUSER,
+      host: process.env.DBHOST,
+      database: process.env.DBNAME,
+      password: process.env.DBPASSWORD,
+      port: process.env.DBPORT,
+      // ssl: { rejectUnauthorized: false }
    })
+
+   // const client = new Client({
+   //    connectionString: process.env.DATABASE_URL,
+   //    ssl: {
+   //       rejectUnauthorized: false
+   //    }
+   // })
 
    await client.connect()
 
@@ -97,7 +97,15 @@ const { handleChangingData, handleChangingPassword } = require('./controllers/pr
          },
          user: async (_, args) => {
             const { rows } = await client.query(`SELECT * FROM users WHERE email='${args.email}'`)
-            return rows[0]
+            const user = rows[0]
+
+            const recipes_result = await client.query(`SELECT * FROM recipes WHERE user_email='${args.email}'`)
+            const recipes = recipes_result.rows
+
+            const fav_recipes_result = await client.query(`SELECT * FROM fav_recipes WHERE user_email='${args.email}'`)
+            const fav_recipes = fav_recipes_result.rows
+            
+            return { ...user, recipes, fav_recipes }
          }
       },
 
