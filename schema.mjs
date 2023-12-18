@@ -23,7 +23,7 @@ export const typeDefs = `#graphql
       users: [User]
       user(email: String!): User!
       recipes: [Recipe!]
-      fav_recipes(email: String!): [FavRecipe!]
+      favRecipes(email: String!): [FavRecipe!]
     }
 
     type User {
@@ -32,7 +32,7 @@ export const typeDefs = `#graphql
       email: String!
       password: String
       recipes: [Recipe!]
-      fav_recipes: [FavRecipe!]
+      favRecipes: [FavRecipe!]
       image: String
     }
 
@@ -119,7 +119,7 @@ export const resolvers = {
       const recipesResult = await client.query("SELECT * FROM recipes");
       return recipesResult.rows;
     },
-    fav_recipes: async (_, args) => {
+    favRecipes: async (_, args) => {
       const favRecipesResult = await client.query(
         `SELECT * FROM fav_recipes WHERE user_email = '${args.email}'`
       );

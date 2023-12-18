@@ -22,6 +22,6 @@ export const getUserData = async (client, email) => {
   return {
     ...user,
     recipes,
-    fav_recipes: favRecipes,
+    favRecipes,
   };
 };
